@@ -17,17 +17,17 @@ public class MyretroApplication {
 	private static final Logger log = LoggerFactory.getLogger(MyretroApplication.class);
 
 	public static void main(String[] args) {
-		// SpringApplication.run(MyretroApplication.class, args);
+		SpringApplication.run(MyretroApplication.class, args);
 
-		new SpringApplicationBuilder()
-				.sources(MyretroApplication.class)
-				.logStartupInfo(false)
-				.lazyInitialization(true)
-				.bannerMode(Banner.Mode.OFF)
-				.web(WebApplicationType.NONE)
-				.profiles("cloud")
-				.listeners(event -> log.info("Event: {}", event.getClass().getCanonicalName()))
-				.run(args);
+//		new SpringApplicationBuilder()
+//				.sources(MyretroApplication.class)
+//				.logStartupInfo(false)
+//				.lazyInitialization(true)
+//				.bannerMode(Banner.Mode.OFF)
+//				.web(WebApplicationType.NONE)
+//				.profiles("cloud")
+//				.listeners(event -> log.info("Event: {}", event.getClass().getCanonicalName()))
+//				.run(args);
 	}
 
 }

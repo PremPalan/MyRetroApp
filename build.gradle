@@ -21,6 +21,21 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
+
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+	// Lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// Properties
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+	// Web
+	implementation 'org.webjars:bootstrap:5.2.3'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
@@ -28,3 +43,25 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+test {
+	testLogging {
+		events "passed", "skipped", "failed"
+		showExceptions true
+		exceptionFormat "full"
+		showCauses true
+		showStackTraces true
+		showStandardStreams = false
+	}
+}
+
+
+// spring-boot-starter-aop : This dependency brings JARs to use
+// aspect-oriented programming (AOP). AOP will help us to remove
+// some of the code scattering and code tangling, so that our code looks
+// readable and understandable.
+
+// spring-boot-starter-configuration-processor: This dependency
+// adds features such as preprocessing our custom properties (used in
+// the previous chapter) and adding hints for IDEs that have IntelliSense
+// and thus know the meaning of the property we are setting up.
