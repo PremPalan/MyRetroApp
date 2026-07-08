@@ -2,15 +2,16 @@ package com.ram.myretro.board;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
+import lombok.*;
 
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class RetroBoard {
 
@@ -21,7 +22,7 @@ public class RetroBoard {
     private String name;
 
     @Singular
-    private List<Card> cards;
+    private Map<UUID, Card> cards = new HashMap<>();
 }
 
 // @Builder: This annotation will create a Fluent API to create a

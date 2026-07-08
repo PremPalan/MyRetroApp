@@ -3,70 +3,78 @@ package com.ram.myretro.persistance;
 import com.ram.myretro.board.Card;
 import com.ram.myretro.board.CardType;
 import com.ram.myretro.board.RetroBoard;
+import lombok.AllArgsConstructor;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.sql.Types;
+import java.util.*;
 
 @Repository
-public class RetroBoardRepository implements com.ram.myretro.persistance.Repository<RetroBoard, UUID> {
+@AllArgsConstructor
+public class RetroBoardRepository implements SimpleRepository<RetroBoard, UUID>{
 
-    private static final Map<UUID, RetroBoard> retroBoardMap = new HashMap<>();
-
-    static {
-        UUID boardId = UUID.fromString("9DC9B71B-A07E-418B-B972-40225449AFF2");
-
-        RetroBoard board = RetroBoard.builder()
-                .id(boardId)
-                .name("Spring Boot 3.0 Meeting")
-                .card(Card.builder()
-                        .id(UUID.fromString("BB2A80A5-A0F5-4180-A6DC-80C84BC014C9"))
-                        .comment("Happy to meet the team")
-                        .cardType(CardType.HAPPY)
-                        .build())
-                .card(Card.builder()
-                        .id(UUID.fromString("011EF086-7645-4534-9512-B9BC4CCFB688"))
-                        .comment("New projects")
-                        .cardType(CardType.HAPPY)
-                        .build())
-                .card(Card.builder()
-                        .id(UUID.fromString("775A3905-D6BE-49AB-A3C4-EBE287B51539"))
-                        .comment("When to meet again??")
-                        .cardType(CardType.MEH)
-                        .build())
-                .card(Card.builder()
-                        .id(UUID.fromString("896C093D-1C50-49A3-A58A-6F1008789632"))
-                        .comment("We need more time to finish")
-                        .cardType(CardType.SAD)
-                        .build())
-                .build();
-
-        retroBoardMap.put(boardId, board);
-    }
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public RetroBoard save(RetroBoard domain) {
+    @Transactional
+    public RetroBoard save(RetroBoard retroBoard) {
+        if(retroBoard.getId() == null){
+            retroBoard.setId(UUID.randomUUID());
+        }
 
-        if(domain.getId() == null) domain.setId(UUID.randomUUID());
+        String sql = "INSERT INTO RETRO_BOARD (ID, NAME) VALUES (?, ?)";
+        jdbcTemplate.update(sql, retroBoard.getId(), retroBoard.getName());
 
-        retroBoardMap.put(domain.getId(), domain);
-        return domain;
+        Map<UUID, Card> mutableMap = new HashMap<>(retroBoard.getCards());
+
+        for(Card card: retroBoard.getCards().values()){
+            card.setRetroBoardId(retroBoard.getId());
+            card = saveCard(card);
+            mutableMap.put(card.getId(), card);
+        }
+        retroBoard.setCards(mutableMap);
+        return retroBoard;
     }
 
     @Override
     public Optional<RetroBoard> findById(UUID uuid) {
-        return Optional.ofNullable(retroBoardMap.get(uuid));
+        String sql = """
+                SELECT r.ID AS id, r.NAME, c.ID AS card_id, c.CARD_TYPE AS card_type, c.COMMENT AS comment FROM RETRO_BOARD r LEFT JOIN CARD c ON r.ID = c.RETRO_BOARD_ID WHERE r.ID = ?
+                """;
+        List<RetroBoard> results = jdbcTemplate.query(sql, new Object[]{uuid}, new int[]{Types.OTHER},
+                new RetroBoardRowMapper());
+
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.getFirst());
     }
 
     @Override
     public Iterable<RetroBoard> findAll() {
-        return retroBoardMap.values();
+        String sql = """ 
+            SELECT r.ID AS id, r.NAME, c.ID AS card_id, c.CARD_TYPE, c.COMMENT FROM RETRO_BOARD r LEFT JOIN CARD c ON r.ID = c.RETRO_BOARD_ID
+            """;
+        return jdbcTemplate.query(sql, new RetroBoardRowMapper());
     }
 
     @Override
-    public void delete(UUID uuid) {
-        retroBoardMap.remove(uuid);
+    @Transactional
+    public void deleteById(UUID uuid) {
+        String sql = "DELETE FROM CARD WHERE RETRO_BOARD_ID = ?";
+        jdbcTemplate.update(sql, uuid);
+
+        sql = "DELETE FROM RETRO_BOARD WHERE ID = ?";
+        jdbcTemplate.update(sql, uuid);
+    }
+
+    private Card saveCard(Card card) {
+        if (card.getId() == null){
+            card.setId(UUID.randomUUID());
+        }
+
+        String sql = "INSERT INTO CARD (ID, CARD_TYPE, COMMENT, RETRO_BOARD_ID) VALUES (?, ?, ?, ?)";
+        jdbcTemplate.update(sql, card.getId(), card.getCardType().name(), card.getComment(), card.getRetroBoardId());
+
+        return card;
     }
 }

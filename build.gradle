@@ -36,12 +36,23 @@ dependencies {
 	// Web
 	implementation 'org.webjars:bootstrap:5.2.3'
 
+	// JDBC
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+
+	// DATABASE
+	runtimeOnly 'org.postgresql:postgresql'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.named('bootRun') {
+	systemProperty 'user.timezone', 'UTC'
 }
 
 test {

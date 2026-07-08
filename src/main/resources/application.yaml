@@ -1,6 +1,13 @@
 spring:
   application:
     name: myretro
+  datasource:
+    generate-unique-name: false
+    name: test-db
+#    url: jdbc:postgresql://localhost:5003/test-db?forceBinary=true&options=-c%20timezone=UTC
+  sql:
+    init:
+      mode: always
 service:
   users:
     server: http://127.0.0.1

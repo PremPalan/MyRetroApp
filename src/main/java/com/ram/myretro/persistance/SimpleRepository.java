@@ -2,12 +2,12 @@ package com.ram.myretro.persistance;
 
 import java.util.Optional;
 
-public interface Repository<D,ID> {
-    D save(D domain);
+public interface SimpleRepository<D,ID> {
+    D save(D d);
 
     Optional<D> findById(ID id);
 
     Iterable<D> findAll();
 
-    void delete(ID id);
+    void deleteById(ID id);
 }
