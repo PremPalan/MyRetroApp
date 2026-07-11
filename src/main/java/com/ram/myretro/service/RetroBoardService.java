@@ -2,27 +2,24 @@ package com.ram.myretro.service;
 
 import com.ram.myretro.board.Card;
 import com.ram.myretro.board.RetroBoard;
-import com.ram.myretro.exception.CardNotFoundException;
-import com.ram.myretro.persistance.SimpleRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @AllArgsConstructor
 @Service
 public class RetroBoardService {
-    SimpleRepository<RetroBoard, UUID> retroBoardRepository;
+
+    CrudRepository<RetroBoard, UUID> retroBoardRepository;
 
     public RetroBoard save(RetroBoard domain) {
         return this.retroBoardRepository.save(domain);
     }
 
     public RetroBoard findById(UUID uuid) {
-        return this.retroBoardRepository.findById(uuid).get();
+        return this.retroBoardRepository.findById(uuid).orElseThrow();
     }
 
     public Iterable<RetroBoard> findAll() {
@@ -52,9 +49,9 @@ public class RetroBoardService {
         return retroBoard.getCards().get(uuidCard);
     }
 
-    public Card saveCard(UUID  uuid,Card card){
+    public Card saveCard(UUID uuid, Card card){
         RetroBoard retroBoard = this.findById(uuid);
-        retroBoard.getCards().put(card.getId(),card);
+        retroBoard.getCards().put(card.getId(), card);
         this.save(retroBoard);
         return card;
     }

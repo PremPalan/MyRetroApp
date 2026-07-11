@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class UsersProperties {
-    String server;
-    Integer port;
-    String username;
-    String password;
+    private String server;
+    private Integer port;
+    private String username;
+    private String password;
 }
