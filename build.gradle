@@ -36,8 +36,8 @@ dependencies {
 	// Web
 	implementation 'org.webjars:bootstrap:5.2.3'
 
-	// JDBC
-	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	// JPA
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
 
 	// DATABASE

@@ -1,23 +1,20 @@
 package com.ram.myretro.board;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.MappedCollection;
-import org.springframework.data.relational.core.mapping.Table;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table
+@Entity
 public class RetroBoard {
 
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     private UUID id;
 
@@ -25,7 +22,7 @@ public class RetroBoard {
     @NotBlank(message = "A name must be provided")
     private String name;
 
-    @Builder.Default
-    @MappedCollection(idColumn = "retro_board_id", keyColumn = "id")
-    private Map<UUID, Card> cards = new HashMap<>();
+    @Singular
+    @OneToMany(mappedBy = "retroBoard")
+    private List<Card> cards;
 }

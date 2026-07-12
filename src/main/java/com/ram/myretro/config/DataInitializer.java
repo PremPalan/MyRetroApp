@@ -24,25 +24,25 @@ public class DataInitializer {
         retroBoardService.addCardToRetroBoard(retroBoard.getId(), Card.builder()
                 .comment("Spring Boot Rocks!")
                 .cardType(CardType.HAPPY)
-                .retroBoardId(retroBoard.getId())
+                .retroBoard(retroBoard)
                 .build());
 
         retroBoardService.addCardToRetroBoard(retroBoard.getId(), Card.builder()
                 .comment("Meet everyone in person")
                 .cardType(CardType.HAPPY)
-                .retroBoardId(retroBoard.getId())
+                .retroBoard(retroBoard)
                 .build());
 
         retroBoardService.addCardToRetroBoard(retroBoard.getId(), Card.builder()
                 .comment("When is the next  one?")
                 .cardType(CardType.MEH)
-                .retroBoardId(retroBoard.getId())
+                .retroBoard(retroBoard)
                 .build());
 
         retroBoardService.addCardToRetroBoard(retroBoard.getId(), Card.builder()
                 .comment("Not enough time to talk to everyone")
                 .cardType(CardType.SAD)
-                .retroBoardId(retroBoard.getId())
+                .retroBoard(retroBoard)
                 .build());
     }
 }
